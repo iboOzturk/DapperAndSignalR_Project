@@ -28,11 +28,12 @@ namespace DapperAndSignalR_Project.API.Controllers
             var values=await _repository.GetAllProductAsync();
             return Ok(values);
         }
-        [HttpDelete]
-        public IActionResult DeleteProduct(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            _repository.DeleteProductAsync(id);
-            return Ok("Silindi");
+             _repository.DeleteProductAsync(id);
+            var values=await _repository.GetAllProductAsync();
+            return Ok(values);
         }
         [HttpPut]
         public IActionResult UpdateProduct(UpdateProductDto updateProductDto)

@@ -40,6 +40,8 @@ namespace DapperAndSignalR_Project.API.Repositories
             using (var connection = _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parameters);
+                var values = await GetAllProductAsync();
+                await _hubContext.Clients.All.SendAsync("ReceiveProductList", values);
             }
         }
 

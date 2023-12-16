@@ -8,59 +8,99 @@
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script type="text/javascript">
         $(document).ready(() => {
-            
             var connection =
                 new
                     signalR.HubConnectionBuilder().
                     withUrl("https://localhost:44355/ProductHub").build();
-
             connection.start().then(() => {
                 console.log(connection.state);
-
                 connection.invoke("GetProductList")
-
             }).catch((err) => {
                 console.log(err);
             });
-
             connection.on("ReceiveProductList", (productList) => {
                 console.log(productList);
+
+                // Ürün listesini ekranda göster
                 displayProductList(productList);
-                
             })
-            function displayProductList(productList) {
-                // Ürün listesini göstermek için bir tablo oluştur
-                var table = $("<table>").addClass("table");
+        });
 
-                // Tablonun başlıklarını ekle
-                var headerRow = $("<tr>");
-                headerRow.append($("<th>").text("Product ID"));
-                headerRow.append($("<th>").text("Name"));
-                headerRow.append($("<th>").text("Description"));
-                headerRow.append($("<th>").text("Create Date"));
-                table.append(headerRow);
+        function formatTurkishDate(dateString) {
+            var date = new Date(dateString);
+            var options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('tr-TR', options);
+        }
 
-                // Her bir ürün için bir satır oluştur
-                $.each(productList, function (index, product) {
-                    var row = $("<tr>");
-                    row.append($("<td>").text(product.productId));
-                    row.append($("<td>").text(product.name));
-                    row.append($("<td>").text(product.description));
-                    row.append($("<td>").text(product.createDate));
-                    table.append(row);
-                });
-
-                // Tabloyu ekrana ekle
-                $("#productTableContainer").empty().append(table);
-            }
-
+        function displayProductList(productList) {
+            var table = $("<table>").addClass("table table-bordered");
            
-        })
-            
+            var headerRow = $("<tr>");
+            headerRow.append($("<th>").text("#"));
+            headerRow.append($("<th>").text("Adı"));
+            headerRow.append($("<th>").text("Açıklama"));
+            headerRow.append($("<th>").text("Oluşturma Tarihi"));
+            headerRow.append($("<th>").text(""));
+            table.append(headerRow);
+
+            $.each(productList, function (index, product) {
+                var row = $("<tr>");
+                row.append($("<td>").text(product.productId));
+                row.append($("<td>").text(product.name));
+                row.append($("<td>").text(product.description));
+
+                var formattedDate = formatTurkishDate(product.createDate);
+                row.append($("<td>").text(formattedDate));
+
+                var deleteButton = $("<button>")
+                    .addClass("btn btn-danger")
+                    .text("Sil")
+                    .click(function () {
+                        deleteProduct(product.productId);
+                    });
+                row.append($("<td>").append(deleteButton));
+
+                table.append(row);
+            });
+
+            $("#productTableContainer").empty().append(table);
+        }
+
+        function deleteProduct(productId) {
+            console.log("Product with ID " + productId + " will be deleted.");
+            $.ajax({
+                url: "https://localhost:44355/api/Products/" + productId,
+                type: "DELETE",
+                success: function (data) {
+                    console.log(data);
+                    displayProductList(data)
+                },
+                error: function (error) {
+                    console.error(error); // Hata durumunda hata mesajını logla
+                }
+            });
+        }
     </script>
 }
 
+<style>
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+    }
 
+        .table, .table th, .table td {
+            border: 1px solid #ddd;
+        }
+
+            .table th, .table td {
+                padding: 8px;
+                text-align: left;
+            }
+</style>
+
+<h2>Ürünler</h2>
+<br />
 <div id="productTableContainer"></div>
 
 
