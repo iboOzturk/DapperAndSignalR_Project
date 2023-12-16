@@ -17,6 +17,10 @@ namespace DapperAndSignalR_Project.UI.Controllers
         {
             return View();
         }
+        public IActionResult Products()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

@@ -22,10 +22,11 @@ namespace DapperAndSignalR_Project.API.Controllers
             return Ok(values);
         }
         [HttpPost]
-        public IActionResult CreateProduct(CreateProductDto createProductDto)
+        public async Task<IActionResult> CreateProduct(CreateProductDto createProductDto)
         {
             _repository.CreateProductAsync(createProductDto);
-            return Ok("Başarılı bir şekilde oluşturuldu");
+            var values=await _repository.GetAllProductAsync();
+            return Ok(values);
         }
         [HttpDelete]
         public IActionResult DeleteProduct(int id)

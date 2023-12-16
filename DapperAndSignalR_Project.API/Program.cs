@@ -1,3 +1,4 @@
+using DapperAndSignalR_Project.API.Hubs;
 using DapperAndSignalR_Project.API.Models;
 using DapperAndSignalR_Project.API.Repositories;
 using System;
@@ -8,6 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<DapperContext>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
+
+builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.WithOrigins("https://localhost:44308/").AllowAnyHeader().
+        AllowAnyMethod().AllowCredentials().SetIsOriginAllowed((host) => true);
+    });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,9 +35,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<ProductHub>("/ProductHub");
 app.Run();

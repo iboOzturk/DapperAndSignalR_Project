@@ -1,16 +1,20 @@
 ﻿using Dapper;
 using DapperAndSignalR_Project.API.DTOs;
+using DapperAndSignalR_Project.API.Hubs;
 using DapperAndSignalR_Project.API.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DapperAndSignalR_Project.API.Repositories
 {
     public class ProductRepository : IProductRepository
     {
         private readonly DapperContext _context;
+        private readonly IHubContext<ProductHub> _hubContext;
 
-        public ProductRepository(DapperContext context)
+        public ProductRepository(DapperContext context, IHubContext<ProductHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         public async void CreateProductAsync(CreateProductDto createProductDto)
@@ -23,6 +27,8 @@ namespace DapperAndSignalR_Project.API.Repositories
             using (var connection=_context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, parametres);
+                var values=await GetAllProductAsync();
+                await _hubContext.Clients.All.SendAsync("ReceiveProductList", values);
             }
         }
 

@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewData["Title"] = "Products";
+}
+
+@section Scripts{
+    
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(() => {
+            
+            var connection =
+                new
+                    signalR.HubConnectionBuilder().
+                    withUrl("https://localhost:44355/ProductHub").build();
+
+            connection.start().then(() => {
+                console.log(connection.state);
+
+                connection.invoke("GetProductList")
+
+            }).catch((err) => {
+                console.log(err);
+            });
+
+            connection.on("ReceiveProductList", (productList) => {
+                console.log(productList);
+                displayProductList(productList);
+                
+            })
+            function displayProductList(productList) {
+                // Ürün listesini göstermek için bir tablo oluştur
+                var table = $("<table>").addClass("table");
+
+                // Tablonun başlıklarını ekle
+                var headerRow = $("<tr>");
+                headerRow.append($("<th>").text("Product ID"));
+                headerRow.append($("<th>").text("Name"));
+                headerRow.append($("<th>").text("Description"));
+                headerRow.append($("<th>").text("Create Date"));
+                table.append(headerRow);
+
+                // Her bir ürün için bir satır oluştur
+                $.each(productList, function (index, product) {
+                    var row = $("<tr>");
+                    row.append($("<td>").text(product.productId));
+                    row.append($("<td>").text(product.name));
+                    row.append($("<td>").text(product.description));
+                    row.append($("<td>").text(product.createDate));
+                    table.append(row);
+                });
+
+                // Tabloyu ekrana ekle
+                $("#productTableContainer").empty().append(table);
+            }
+
+           
+        })
+            
+    </script>
+}
+
+
+<div id="productTableContainer"></div>
+
+
