@@ -31,9 +31,8 @@ namespace DapperAndSignalR_Project.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-             _repository.DeleteProductAsync(id);
-            var values=await _repository.GetAllProductAsync();
-            return Ok(values);
+             _repository.DeleteProductAsync(id);           
+            return Ok("Silindi");
         }
         [HttpPut]
         public IActionResult UpdateProduct(UpdateProductDto updateProductDto)
