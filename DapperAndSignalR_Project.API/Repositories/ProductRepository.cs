@@ -55,6 +55,19 @@ namespace DapperAndSignalR_Project.API.Repositories
             }
         }
 
+        public async Task<ResultProductDto> GetProductAsync(int id)
+        {
+            string query = "Select * from Products where ProductID=@ProductID";
+            var parameter = new DynamicParameters();
+            parameter.Add("@ProductID", id);
+            using (var connection = _context.CreateConnection())
+            {
+                var value = await connection.QueryFirstOrDefaultAsync<ResultProductDto>(query, parameter);
+
+                return value;
+            }
+        }
+
         public async void UpdateProductAsync(UpdateProductDto updateProductDto)
         {
             string query = "Update Products " +

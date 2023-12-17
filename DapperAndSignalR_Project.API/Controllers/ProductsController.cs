@@ -21,6 +21,12 @@ namespace DapperAndSignalR_Project.API.Controllers
             var values= await _repository.GetAllProductAsync();
             return Ok(values);
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduct(int id)
+        {
+            var values= await _repository.GetProductAsync(id);
+            return Ok(values);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductDto createProductDto)
         {

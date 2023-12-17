@@ -60,6 +60,14 @@
                     });
                 row.append($("<td>").append(deleteButton));
 
+                var updateButton = $("<button>")
+                    .addClass("btn btn-primary")
+                    .text("Güncelle")
+                    .click(function () {
+                        updateProduct(product.productId);
+                    });
+                row.append($("<td>").append(updateButton));
+
                 table.append(row);
             });
 
@@ -67,18 +75,27 @@
         }
 
         function deleteProduct(productId) {
-            console.log("Product with ID " + productId + " will be deleted.");
-            $.ajax({
-                url: "https://localhost:44355/api/Products/" + productId,
-                type: "DELETE",
-                success: function (data) {
-                    console.log(data);
-                    // displayProductList(data)
-                },
-                error: function (error) {
-                    console.error(error); // Hata durumunda hata mesajını logla
-                }
-            });
+            if (confirm("Ürünü silmek istediğinizden emin misiniz?")) {
+                $.ajax({
+                    url: "https://localhost:44355/api/Products/" + productId,
+                    type: "DELETE",
+                    success: function (data) {
+                        console.log(data);
+                        console.log("Product with ID " + productId + " will be deleted.");
+
+                    },
+                    error: function (error) {
+                        console.error(error); // Hata durumunda hata mesajını logla
+                    }
+                });
+            }
+          
+        }
+
+        function updateProduct(productId) {
+            // Güncelleme sayfasına yönlendirme işlemi
+            window.location.href = "/Product/Update/" + productId;
+
         }
     </script>
 }
