@@ -1,6 +1,7 @@
 using DapperAndSignalR_Project.API.Hubs;
 using DapperAndSignalR_Project.API.Models;
 using DapperAndSignalR_Project.API.Repositories;
+using DapperAndSignalR_Project.API.Repositories.LoginRepositories;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<DapperContext>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<ILoginRepository, LoginRepository>();
 
 builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
