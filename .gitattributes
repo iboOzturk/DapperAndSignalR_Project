@@ -8,6 +8,8 @@
 
 *.scss linguist-detectable=false
 
+*.less linguist-detectable=false
+
 *.css linguist-detectable=false
 
 ###############################################################################
